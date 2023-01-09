@@ -1,5 +1,7 @@
 import Head from "next/head";
+import { useAddress } from "@thirdweb-dev/react";
 const Home = () => {
+  const address = useAddress();
   return (
     <>
       <Head>
@@ -9,7 +11,11 @@ const Home = () => {
         <link rel="icon" href="/images/ape.png" />
       </Head>
       <div>
-        <h1 className="font-mono text-base">Home</h1>
+        {address ? (
+          <h1 className="font-mono text-base">Home</h1>
+        ) : (
+          <h1 className="font-mono text-base">Connect Wallet</h1>
+        )}
       </div>
     </>
   );

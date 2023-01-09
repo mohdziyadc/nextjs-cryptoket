@@ -1,85 +1,48 @@
-import {
-  HomeOutlined,
-  PropertySafetyOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu } from "antd";
-import { Col, Row } from "antd";
-import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useRouter } from "next/router";
+import classNames from "classnames";
 
-const { Header } = Layout;
-const items = [
-  {
-    label: <Link href="/">Home</Link>,
-    key: "home",
-    icon: <HomeOutlined />,
-  },
-  {
-    label: <Link href="/owned-nft">Owned NFTS</Link>,
-    key: "owned",
-    icon: <PropertySafetyOutlined />,
-  },
-  {
-    label: <Link href="/list-nft">List NFTs</Link>,
-    key: "list",
-    icon: <UnorderedListOutlined />,
-  },
-];
-const connectWallet = () => {
-  console.log("Button Clicked");
-};
+import { ConnectWallet } from "@thirdweb-dev/react";
 
 const Navbar = () => {
-  const [currentPage, setCurrentPage] = useState("home");
-  const menuItemClick = (element) => {
-    console.log(element.key);
-    setCurrentPage(element.key);
-    console.log(`Current Page: ${currentPage}`);
-  };
+  // const { address, connectWallet, error } = useWeb3();
+
+  // error ? console.log(error) : null;
 
   return (
-    <Layout className="layout">
-      <Header>
-        <Row>
-          <Col span={8}>
-            <div className="Logo justify-center items-center my-4">
-              <div className="flex flex-row flex-initial items-center text-white font-mono font-semibold text-xl">
-                <Image
-                  src="/images/ape.png"
-                  alt="ape"
-                  height="32"
-                  width="32"
-                  className="mx-2"
-                />
-                CryptoKet
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <Menu
-              onClick={menuItemClick}
-              theme="dark"
-              mode="horizontal"
-              items={items}
-              selectedKeys={[currentPage]}
-            ></Menu>
-          </Col>
-          <Col span={4}>
-            <div>
-              <button
-                className="text-white font-mono font-semibold text-base rounded-full bg-blue-600 py-1 px-4 hover:bg-blue-800"
-                onClick={connectWallet}
-              >
-                Connect
-              </button>
-            </div>
-          </Col>
-        </Row>
-        <div></div>
-      </Header>
-    </Layout>
+    <nav className="p-2 border-b-2 flex flex-row justify-between items-center bg-gradient-to-r from-gray-900 to-gray-600">
+      <div className="px-4 flex flex-row justify-center items-center">
+        <img src="/images/ape.png" />
+        <h1 className="py-4 px-2 font-mono font-bold text-3xl text-white">
+          CryptoKet
+        </h1>
+      </div>
+
+      <div className="flex flex-row justify-center items-center flex-1">
+        <NavBarItem href="/">Home</NavBarItem>
+        <NavBarItem href="/owned-nft">Owned</NavBarItem>
+        <NavBarItem href="/create-nft">Create</NavBarItem>
+      </div>
+      <ConnectWallet accentColor="#FFC300" colorMode="dark" />
+    </nav>
+  );
+};
+
+const NavBarItem = (props) => {
+  const { href, children } = props;
+  const router = useRouter();
+  const activeRoute = router.route.split("/")[1];
+  const isActive = href == `/${activeRoute}`;
+
+  return (
+    <Link
+      href={href}
+      className={classNames("rounded-lg px-4 py-2 font-semibold text-white", {
+        "bg-gradient-to-r from-cyan-200 to-cyan-400 text-black": isActive,
+      })}
+    >
+      {children}
+    </Link>
   );
 };
 export default Navbar;
