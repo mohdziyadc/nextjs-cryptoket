@@ -1,13 +1,32 @@
 import { Form } from "@web3uikit/core";
 import Head from "next/head";
 import { useAddress } from "@thirdweb-dev/react";
-import { useState } from "react";
-const createNFT = () => {
-  const address = useAddress();
-  const [image, setImage] = useState(false);
-  const submitNFT = (form) => {
-    console.log("nft submitted");
+import { useEffect, useState } from "react";
+import useNftMarket from "../hooks/nftMarket";
+import NFTMarket from "../constants/NFTMarket.json";
+import { useMoralis, useWeb3Contract } from "react-moralis";
 
+const NFT_MARKET_ADDRESS = process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS;
+const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY;
+
+const createNFT = () => {
+  console.log(PRIVATE_KEY);
+  const { chainId, isWeb3Enabled } = useMoralis();
+  const address = useAddress();
+  const [isLoading, setIsLoading] = useState(false);
+  const [mintBtnText, setMintBtnText] = useState("Mint");
+  const { createNftTokenUri } = useNftMarket();
+
+  const { runContractFunction } = useWeb3Contract();
+
+  useEffect(() => {}, [isWeb3Enabled]);
+
+  // const nftMarket = new Contract(NFT_MARKET_ADDRESS, NFTMarket.abi, signer);
+
+  const submitNFT = async (form) => {
+    console.log("nft submitted");
+    setIsLoading(true);
+    setMintBtnText("Minting");
     if (form.data[2].inputResult == "") {
       alert("No image found for NFT");
       return;
@@ -17,9 +36,49 @@ const createNFT = () => {
     const nftDescription = form.data[1].inputResult;
     const nftImage = form.data[2].inputResult;
 
-    console.log(nftName);
-    console.log(nftDescription);
-    console.log(nftImage);
+    const nftValues = {
+      name: nftName,
+      desc: nftDescription,
+      image: nftImage,
+    };
+
+    const tokenUri = await createNftTokenUri(nftValues);
+    console.log(`Token URI: ${tokenUri}`);
+
+    const params = {
+      abi: NFTMarket.abi,
+      contractAddress: NFT_MARKET_ADDRESS,
+      functionName: "mintNFT",
+      params: {
+        tokenURI: tokenUri,
+      },
+    };
+
+    try {
+      await runContractFunction({
+        params: params,
+        onSuccess: async (tx) => {
+          setIsLoading(false);
+          setMintBtnText("Minted");
+          const reciept = await tx.wait();
+          console.log(reciept);
+        },
+        onError: (e) => {
+          setIsLoading(false);
+          setMintBtnText("Failed");
+          console.log(e);
+        },
+      });
+      // const transaction = await nftMarket.mintNFT(tokenUri);
+      // const reciept = await transaction.wait();
+      // console.log(reciept);
+    } catch (e) {
+      console.log(e);
+    }
+
+    // console.log(nftName);
+    // console.log(nftDescription);
+    // console.log(nftImage);
   };
   return (
     <>
@@ -51,12 +110,14 @@ const createNFT = () => {
           </button>
         </div>
       </div> */}
-      {address ? (
+      {isWeb3Enabled ? (
         <div className="flex flex-auto h-screen justify-center -mt-1 py-4 items-start bg-gradient-to-r from-blue-400 to-emerald-400">
           <Form
             onSubmit={submitNFT}
             buttonConfig={{
-              text: "Mint",
+              isLoading: isLoading,
+              loadingText: mintBtnText,
+              text: mintBtnText,
               theme: "custom",
               customize: {
                 backgroundColor: "#FFC300",

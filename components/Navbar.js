@@ -2,8 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import classNames from "classnames";
 
-import { ConnectWallet } from "@thirdweb-dev/react";
-
+import { ConnectButton } from "@web3uikit/web3";
 const Navbar = () => {
   // const { address, connectWallet, error } = useWeb3();
 
@@ -23,7 +22,7 @@ const Navbar = () => {
         <NavBarItem href="/owned-nft">Owned</NavBarItem>
         <NavBarItem href="/create-nft">Create</NavBarItem>
       </div>
-      <ConnectWallet accentColor="#FFC300" colorMode="dark" />
+      <ConnectButton moralisAuth={false}></ConnectButton>
     </nav>
   );
 };
