@@ -28,7 +28,7 @@ const Home = () => {
                         spinnerType="wave"
                     />
                 </div>
-            ) : data.nfts == "" ? (
+            ) : data?.nfts == "" ? (
                 <div className="flex justify-center items-center text-lg text-neutral-800 font-semibold font-mono p-4">
                     There are no NFTs listed right now.
                 </div>

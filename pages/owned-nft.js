@@ -28,7 +28,7 @@ const OwnedNFT = () => {
                         spinnerType="wave"
                     />
                 </div>
-            ) : data.nfts != "" ? (
+            ) : data?.nfts != "" ? (
                 <div className="grid grid-cols-4 justify-center items-center gap-4 p-4">
                     {data?.nfts.map((nft) => {
                         const { id, from, to, tokenUri, price } = nft;
