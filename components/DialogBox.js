@@ -76,7 +76,21 @@ export default function DialogBox({
                 onOk={() => {
                     setCancelListing(true);
                     cancelListingNFT({
-                        onError: (e) => console.log(e),
+                        onError: (e) => {
+                            if (
+                                e.message.includes(
+                                    "MetaMask Tx Signature: User denied"
+                                )
+                            ) {
+                                onClose && onClose();
+                                dispatch({
+                                    type: "error",
+                                    message: "You cancelled the transaction",
+                                    title: "Transaction Rejected",
+                                    position: "topR",
+                                });
+                            }
+                        },
                         onSuccess: async (tx) => {
                             setCancelListing(true);
 

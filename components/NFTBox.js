@@ -90,7 +90,30 @@ export default function NFTBox({
         isOwnedByUser
             ? setShowModal(true)
             : buyItem({
-                  onError: (error) => console.log(error),
+                  onError: (error) => {
+                      if (
+                          error.message.includes("err: insufficient funds for")
+                      ) {
+                          dispatch({
+                              type: "error",
+                              message: "Please check your wallet balance",
+                              title: "Insufficient Funds",
+                              position: "topR",
+                          });
+                      }
+
+                      if (
+                          error.message ==
+                          "MetaMask Tx Signature: User denied transaction signature."
+                      ) {
+                          dispatch({
+                              type: "error",
+                              message: "You rejected the transaction",
+                              title: "Transaction Rejected",
+                              position: "topR",
+                          });
+                      }
+                  },
                   onSuccess: async (tx) => {
                       try {
                           const reciept = await tx.wait();
