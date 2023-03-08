@@ -1,5 +1,8 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Backend of CrytoKet
+[Hardhat-CryptoKet](https://github.com/mohdziyadc/hardhat-cryptoket)
+
 ## Getting Started
 
 First, run the development server:
